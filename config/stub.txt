@@ -1,0 +1,4 @@
+gameloop
+read diceCount:int
+loop diceCount read owner:int cell:word(2) top:int front:int bottom:int back:int left:int right:int
+write A1 URUL
