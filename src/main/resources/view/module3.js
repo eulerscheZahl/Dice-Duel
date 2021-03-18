@@ -146,7 +146,7 @@ export class module3 {
             requestAnimationFrame(animate);
             renderer.render(scene, camera);
         };
-        const controls = new orbit.OrbitControls(camera, renderer.domElement);
+        this.controls = new orbit.OrbitControls(camera, renderer.domElement);
 
         const base = assets.baseUrl || '';
         new FBXLoader().load(base + assets.images['board.fbx'],function ( fbx ) {
@@ -157,10 +157,20 @@ export class module3 {
             fbx.children[0].material.specular.b = 0.05
             scene.add(fbx)
         } );
+        new FBXLoader().load(base + assets.images['Dining_table.fbx'],function ( fbx ) {
+            fbx.scale.set(0.25, 0.25, 0.25)
+            fbx.position.y = -0.1
+            fbx.children[0].material.specular.r = 0.05
+            fbx.children[0].material.specular.g = 0.05
+            fbx.children[0].material.specular.b = 0.05
+            scene.add(fbx)
+        } );
 
-
-        camera.position.set(5, 10, 10);
-        controls.update();
+        //camera.position.set(5, 10, 10);
+        camera.position.set(0, 4.82, 4.11)
+        camera.rotation.set(-1.09, 0, 0)
+        this.controls.target.set(0, -0.82, 1.19)
+        this.controls.update();
 
         const lights = [];
         lights[0] = new THREE.PointLight(0xffffff, 1, 0);

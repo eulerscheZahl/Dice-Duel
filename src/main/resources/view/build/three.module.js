@@ -34851,7 +34851,7 @@ class ImageLoader extends Loader {
 
         // edit eulerscheZahl: ugly hack
         if (url == "https://cdn-games.codingame.com/community/1500515-1615736605574/board.jpg") {
-            url = 'https://cdn-games.codingame.com/community/1500515-1615736605574/04995b6a779de91884c5f9bc90aaa814d80dd185c645df512ad04da9ff344318.jpg'
+            url = 'https://cdn-games.codingame.com/community/1500515-1615736605574/245df58d3d0386529cb33d42369a5444560243134a1d7b8368c129857a362c2b.jpg'
         }
 		image.src = url;
 
