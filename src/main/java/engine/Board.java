@@ -20,12 +20,14 @@ public class Board {
     public Board(Random random, List<Player> players, BoardModule module) {
         this.module = module;
         for (int i = 0; i < SIZE; i++) {
-            dice.add(new Die(i, 0, players.get(0)));
-            dice.add(new Die(i, SIZE - 1, players.get(1)));
-        }
-        for (Die die : dice) {
-            //die.scramble(random);
-            module.createDie(die);
+            Die d1 = new Die(i, 0, players.get(0));
+            Die d2 = new Die(SIZE - 1 - i, SIZE - 1, players.get(1));
+            String path1 = d1.scramble(random);
+            String path2 = d2.mirror(d1);
+            dice.add(d1);
+            dice.add(d2);
+            module.createDie(d1, path1);
+            module.createDie(d2, path2);
         }
     }
 

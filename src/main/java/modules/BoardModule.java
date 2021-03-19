@@ -18,8 +18,8 @@ public class BoardModule implements Module {
         gameManager.registerModule(this);
     }
 
-    public void createDie(Die die) {
-        commit += ";C " + die.getId() + " " + die.getOwner().getIndex() + " " + die.getX() + " " + die.getY();
+    public void createDie(Die die, String path) {
+        commit += ";C " + die.getId() + " " + die.getOwner().getIndex() + " " + die.getX() + " " + die.getY() + " " + path;
     }
 
     public void moveDie(Die die, String path) {

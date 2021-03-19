@@ -2,10 +2,7 @@ package engine;
 
 import com.codingame.game.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 public class Die {
     /*   0
@@ -19,6 +16,29 @@ public class Die {
     private int y = 0;
     private int id;
     private static int idCounter;
+
+    private static ArrayList<DiePath> rotations = new ArrayList<>();
+    static {
+        Die die = new Die(0, 0, null);
+        rotations.add(new DiePath("", die));
+        HashSet<Integer> reached = new HashSet<>();
+        reached.add(die.state[0] * 10 + die.state[1]);
+        while (rotations.size() < 24) {
+            for (int i = rotations.size() - 1; i >= 0; i--) {
+                String path = rotations.get(i).path;
+                Die d = rotations.get(i).die;
+                for (String dir : new String[]{"U", "D", "R", "L"}) {
+                    Die d2 = new Die(0, 0, null);
+                    d2.state = Arrays.copyOf(d.state, d.state.length);
+                    d2.rotate(dir);
+                    if (reached.contains(d2.state[0] * 10 + d2.state[1])) continue;
+                    reached.add(d2.state[0] * 10 + d2.state[1]);
+                    rotations.add(new DiePath(path + dir, d2));
+                }
+            }
+        }
+        idCounter = 0;
+    }
 
     public Die(int x, int y, Player owner) {
         this.x = x;
@@ -94,11 +114,21 @@ public class Die {
         return killed;
     }
 
-    public void scramble(Random random) {
-        for (int i = 0; i < 100; i++) {
-            if (random.nextInt(2) == 0) rotateUp(random.nextInt(3) + 1);
-            else rotateRight(random.nextInt(3) + 1);
+    public String scramble(Random random) {
+        int idx = random.nextInt(rotations.size());
+        Die die = rotations.get(idx).die;
+        this.state = Arrays.copyOf(die.state, die.state.length);
+        return rotations.get(idx).path;
+    }
+
+    public String mirror(Die die) {
+        for (DiePath rot : rotations) {
+            if (rot.die.getTop() == die.getTop() && rot.die.state[1] == die.state[3]) {
+                this.state = Arrays.copyOf(rot.die.state, rot.die.state.length);
+                return rot.path;
+            }
         }
+        return "";
     }
 
     public String getPlayerInput(Player player) {

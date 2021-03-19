@@ -105,11 +105,13 @@ export class module3 {
             if (d[0] == 'C') { // create
                 const owner = +d[2]
                 var die = { dieId, owner, states:[{t:0, x:0, y:0, z:0, rx:0, ry:0, rz:0}], testRotation:new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), null) }
+                this.rollDie(die, d[5], 0)
+                die.states = [{...die.states[die.states.length-1], t:0, x:0, y:0, z:0}]
                 cubes.push(die)
                 new FBXLoader().load( base + assets.images[['red.fbx', 'blue.fbx'][owner]],function ( fbx ) {
                     fbx.position.set(d[3]-3.5,0.5,3.5-d[4])
                     fbx.rotation.set(0,0,0)
-                    fbx.children[0].rotation.set(0,0,0)
+                    fbx.children[0].rotation.set(die.states[0].rx, die.states[0].ry, die.states[0].rz)
                     fbx.children[0].position.set(0,0,0)
                     die.model = fbx.children[0]
                     scene.add(fbx)

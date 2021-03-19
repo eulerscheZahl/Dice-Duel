@@ -1,0 +1,6 @@
+/.idea/*
+/.settings/*
+/target/*
+.classpath
+.project
+/src/test/java/Agent2.java
