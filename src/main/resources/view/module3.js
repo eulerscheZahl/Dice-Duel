@@ -158,7 +158,7 @@ export class module3 {
             fbx.children[0].material.specular.g = 0.05
             fbx.children[0].material.specular.b = 0.05
             scene.add(fbx)
-        } );
+        });
         new FBXLoader().load(base + assets.images['Dining_table.fbx'],function ( fbx ) {
             fbx.scale.set(0.25, 0.25, 0.25)
             fbx.position.y = -0.1
@@ -166,10 +166,63 @@ export class module3 {
             fbx.children[0].material.specular.g = 0.05
             fbx.children[0].material.specular.b = 0.05
             scene.add(fbx)
-        } );
+        });
+
+        for (var playerId = 0; playerId < 2; playerId++) {
+            var textureLoader = new THREE.TextureLoader();
+            var crateTexture = textureLoader.load(players[playerId].avatar.textureCacheIds[1]);
+
+            var imageCrate = new THREE.Mesh(
+                new THREE.BoxGeometry(2,2,2),
+                new THREE.MeshPhongMaterial({
+                    color:0xffffff,
+                    map:crateTexture,
+                })
+            );
+            imageCrate.position.set(-6.5, 1, 3-5*playerId);
+            scene.add(imageCrate);
+
+            var nameCrate = new THREE.Mesh(
+                new THREE.BoxGeometry(2,0.5,2),
+                new THREE.MeshPhongMaterial({
+                    color:0x222222,
+                })
+            );
+            nameCrate.position.set(-6.5, -0.25, 3-5*playerId);
+            scene.add(nameCrate);
+
+
+
+            const loader = new THREE.FontLoader();
+            const playerName = players[playerId].name
+            const pId = playerId;
+            const playerColor = players[playerId].color
+            //loader.load( assets.images['optimer_bold.typeface.json.txt'], function ( response ) {
+            loader.load('https://cdn-games.codingame.com/community/1500515-1615736605574/d74d88452c3a5afd3fb0e14149ba3bf5a094577f4574177a90a9fd0d9797f79e.txt', function(response) {
+                const font = response;
+                var textGeo = new THREE.TextGeometry( playerName, {
+                    font: font,
+                    size: 0.15,
+                    height: 0.05,
+                    curveSegments: 4,
+                    bevelThickness: 0.02,
+                    bevelSize: 0.015,
+                    bevelEnabled: true
+                });
+                textGeo.computeBoundingBox();
+                const centerOffset = - 0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
+                const materials = [
+                    new THREE.MeshPhongMaterial( { color: playerColor, flatShading: true } ), // front
+                    new THREE.MeshPhongMaterial( { color: playerColor } ) // side
+                ];
+                var textMesh = new THREE.Mesh( textGeo, materials );
+                textMesh.position.set(centerOffset - 6.5, -0.2, 4-5*pId);
+                scene.add(textMesh);
+            });
+        }
 
         //camera.position.set(5, 10, 10);
-        camera.position.set(0, 4.82, 4.11)
+        camera.position.set(-0.5, 4.82, 4.11)
         camera.rotation.set(-1.09, 0, 0)
         this.controls.target.set(0, -0.82, 1.19)
         this.controls.update();
