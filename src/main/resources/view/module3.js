@@ -221,8 +221,17 @@ export class module3 {
             });
         }
 
-        //camera.position.set(5, 10, 10);
-        camera.position.set(-0.5, 4.82, 4.11)
+        scene.background = new THREE.CubeTextureLoader()
+        	.load( [
+        		'https://cdn-games.codingame.com/community/1500515-1615736605574/011f1a5e83599a186a7ca999ff449d77c94d334570b679c5a232241ae4dce625.png', //assets.images['rainbow_ft.png'],
+        		'https://cdn-games.codingame.com/community/1500515-1615736605574/653bf76f5b51c4fae63ee8fe6ffb6be0c1228db990d15080bbb98d52a4e9c348.png', //assets.images['rainbow_bk.png'],
+        		'https://cdn-games.codingame.com/community/1500515-1615736605574/88181270c9f73ea13ea7b0cc9a06443afd8a68498ab0f6de5aebf810d16acb8e.png', //assets.images['rainbow_up.png'],
+        		'https://cdn-games.codingame.com/community/1500515-1615736605574/fd5c38f58d59e46ca40ee87139ee905c81007010b2b22a722cfce7ad433f6217.png', //assets.images['rainbow_dn.png'],
+        		'https://cdn-games.codingame.com/community/1500515-1615736605574/6d7c0e3d256837b8c0b76c1844a495c98b629d5626a0e94a3f96368d0a1169fe.png', //assets.images['rainbow_rt.png'],
+        		'https://cdn-games.codingame.com/community/1500515-1615736605574/77b816aaa288e60d4358bc649defaaba4637c2b46d665ae70ba2bd50370099a8.png', //assets.images['rainbow_lf.png'],
+        	] );
+
+        camera.position.set(0, 4.82, 4.11)
         camera.rotation.set(-1.09, 0, 0)
         this.controls.target.set(0, -0.82, 1.19)
         this.controls.update();
