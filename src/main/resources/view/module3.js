@@ -80,8 +80,10 @@ export class module3 {
             const height = width * 9 / 16;
             this.container.style.width = width;
             this.container.style.height = height;
-            this.container.children[0].style.width = width;
-            this.container.children[0].style.height = height;
+            this.container.children[this.container.children.length-1].style.width = width;
+            this.container.children[this.container.children.length-1].style.height = height;
+            const settings = this.container.getElementsByClassName('settings_panel')[0];
+            settings.style.height = this.container.style.height
 
             this.renderer.setSize(width, height);
             this.camera.aspect = width / height;
