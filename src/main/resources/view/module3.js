@@ -28,9 +28,30 @@ export class module3 {
 
     reinitScene(container, canvasData) {}
 
+    createMarker() {
+        var marker = new THREE.Mesh(
+            new THREE.BoxGeometry(0.8,0.2,0.8),
+            new THREE.MeshPhongMaterial({
+                color:0x222222,
+                opacity:0.7,
+                flatShading: true,
+                transparent: true,
+            })
+        );
+        marker.states = [{t:-1, visible:false, x:0, y:0, z:0, color:0}]
+        this.scene.add(marker);
+        this.pathMarkers.push(marker)
+    }
+
     rollDie(die, direction, t, updateMarkers) {
         var s = { ...die.states[die.states.length-1] };
         if (s.t != t) die.states.push({...s, t:t})
+        if (updateMarkers) {
+            while (this.pathMarkers.length == 0) this.createMarker();
+            var ms = { ...this.pathMarkers[0].states[this.pathMarkers[0].states.length-1], t:t, x:s.x+die.offset[0], z:s.z+die.offset[2], color:[0xff0000, 0x0000ff][t%2], visible:true }
+            this.pathMarkers[0].states.push(ms)
+            this.pathMarkers[0].states.push( { ...ms, t:t+0.999, visible:false} )
+        }
         for (var i = 0; i < direction.length; i++) {
             s = { ...die.states[die.states.length-1], t:t+(i+1)/direction.length };
             die.testRotation.position.set(0,0,0)
@@ -45,23 +66,10 @@ export class module3 {
             die.states.push(s);
 
             if (updateMarkers) {
-                if (this.pathMarkers.length <= i) {
-                    var marker = new THREE.Mesh(
-                        new THREE.BoxGeometry(0.8,0.2,0.8),
-                        new THREE.MeshPhongMaterial({
-                            color:0x222222,
-                            opacity:0.7,
-                            flatShading: true,
-                            transparent: true,
-                        })
-                    );
-                    marker.states = [{t:-1, visible:false, x:0, y:0, z:0, color:0}]
-                    this.scene.add(marker);
-                    this.pathMarkers.push(marker)
-                }
-                var ms = { ...this.pathMarkers[i].states[this.pathMarkers[i].states.length-1], t:t+i/direction.length, x:s.x+die.offset[0], z:s.z+die.offset[2], color:[0xff0000, 0x0000ff][t%2], visible:true }
-                this.pathMarkers[i].states.push(ms)
-                this.pathMarkers[i].states.push( { ...ms, t:t+0.999, visible:false} )
+                if (this.pathMarkers.length <= i+1) this.createMarker();
+                var ms = { ...this.pathMarkers[i+1].states[this.pathMarkers[i+1].states.length-1], t:t+i/direction.length, x:s.x+die.offset[0], z:s.z+die.offset[2], color:[0xff0000, 0x0000ff][t%2], visible:true }
+                this.pathMarkers[i+1].states.push(ms)
+                this.pathMarkers[i+1].states.push( { ...ms, t:t+0.999, visible:false} )
            }
         }
     }
@@ -161,11 +169,16 @@ export class module3 {
     handleGlobalData(players, globalData) {
         this.container = document.createElement('div');
         const viewer = document.body.children[0].children[1].children[0];
-        const parent = viewer.parentElement
+        const settings = viewer.getElementsByClassName('settings_panel')[0];
+        viewer.removeChild(settings)
+        const parent = viewer.parentElement;
         parent.replaceChild(this.container, viewer);
+        this.container.appendChild(settings)
 
         this.container.style.width = window.innerWidth;
         this.container.style.height = window.innerWidth * 9 / 16;
+        settings.style.width = 256
+        settings.style.height = this.container.style.height
 
         this.camera = new THREE.PerspectiveCamera(75, 16 / 9, 0.1, 1000);
         this.renderer.setSize(window.innerWidth, window.innerWidth * 9 / 16);
