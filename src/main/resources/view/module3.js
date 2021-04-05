@@ -18,6 +18,7 @@ THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
 
 export class module3 {
     cubes = []
+    pathMarkers = []
     scene = new THREE.Scene();
     renderer = new THREE.WebGLRenderer();
 
@@ -27,7 +28,7 @@ export class module3 {
 
     reinitScene(container, canvasData) {}
 
-    rollDie(die, direction, t) {
+    rollDie(die, direction, t, updateMarkers) {
         var s = { ...die.states[die.states.length-1] };
         if (s.t != t) die.states.push({...s, t:t})
         for (var i = 0; i < direction.length; i++) {
@@ -42,6 +43,26 @@ export class module3 {
             s.ry = die.testRotation.rotation.y
             s.rz = die.testRotation.rotation.z
             die.states.push(s);
+
+            if (updateMarkers) {
+                if (this.pathMarkers.length <= i) {
+                    var marker = new THREE.Mesh(
+                        new THREE.BoxGeometry(0.8,0.2,0.8),
+                        new THREE.MeshPhongMaterial({
+                            color:0x222222,
+                            opacity:0.7,
+                            flatShading: true,
+                            transparent: true,
+                        })
+                    );
+                    marker.states = [{t:-1, visible:false, x:0, y:0, z:0, color:0}]
+                    this.scene.add(marker);
+                    this.pathMarkers.push(marker)
+                }
+                var ms = { ...this.pathMarkers[i].states[this.pathMarkers[i].states.length-1], t:t+i/direction.length, x:s.x+die.offset[0], z:s.z+die.offset[2], color:[0xff0000, 0x0000ff][t%2], visible:true }
+                this.pathMarkers[i].states.push(ms)
+                this.pathMarkers[i].states.push( { ...ms, t:t+0.999, visible:false} )
+           }
         }
     }
 
@@ -92,6 +113,15 @@ export class module3 {
             c.testRotation.rotateAroundWorldAxis(after.point, after.axis, after.angle*frac)
             c.model.rotation.set(c.testRotation.rotation.x, c.testRotation.rotation.y, c.testRotation.rotation.z)
         }
+        for (var i = 0; i < this.pathMarkers.length; i++) {
+            const m = this.pathMarkers[i];
+            var idx = 0;
+            while (m.states.length > idx + 1 && m.states[idx + 1].t < t) idx++;
+            var state = m.states[idx];
+            m.position.set(state.x, state.y, -state.z)
+            m.visible = state.visible
+            m.material.color.setHex(state.color)
+        }
     }
 
     handleFrameData(frameInfo, data) {
@@ -104,8 +134,8 @@ export class module3 {
             const dieId = +d[1]
             if (d[0] == 'C') { // create
                 const owner = +d[2]
-                var die = { dieId, owner, states:[{t:0, x:0, y:0, z:0, rx:0, ry:0, rz:0}], testRotation:new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), null) }
-                this.rollDie(die, d[5], 0)
+                var die = { dieId, owner, states:[{t:0, x:0, y:0, z:0, rx:0, ry:0, rz:0}], testRotation:new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), null), offset:[d[3]-3.5,0,3.5-d[4]+[-7,7][owner]] }
+                this.rollDie(die, d[5], 0, false)
                 die.states = [{...die.states[die.states.length-1], t:0, x:0, y:0, z:0}]
                 cubes.push(die)
                 new FBXLoader().load( base + assets.images[['red.fbx', 'blue.fbx'][owner]],function ( fbx ) {
@@ -118,7 +148,7 @@ export class module3 {
                 } );
             } else if (d[0] == 'M') { // move
                 const die = cubes.filter(c => c.dieId == dieId)[0]
-                this.rollDie(die, d[2], frameInfo.number - 1)
+                this.rollDie(die, d[2], frameInfo.number - 1, true)
             } else if (d[0] == 'K') { // kill
                 const die = cubes.filter(c => c.dieId == dieId)[0]
                 die.states.push({...die.states[die.states.length-1], t:frameInfo.number, visible:false})
