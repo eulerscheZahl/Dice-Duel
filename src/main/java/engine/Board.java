@@ -2,6 +2,7 @@ package engine;
 
 import com.codingame.game.Player;
 import com.codingame.gameengine.core.GameManager;
+import com.codingame.gameengine.core.MultiplayerGameManager;
 import modules.BoardModule;
 
 import java.util.ArrayList;
@@ -42,13 +43,14 @@ public class Board {
         return result;
     }
 
-    public ArrayList<Move> listMoves(Player player) {
-        ArrayList<Move> moves = new ArrayList<>();
+    public List<Move> listMoves(Player player, MultiplayerGameManager<Player> gameManager) {
+        List<Move> moves = new ArrayList<>();
         List<Die> myDice = dice.stream().filter(d -> d.getOwner() == player).collect(Collectors.toList());
         List<Die> oppDice = dice.stream().filter(d -> d.getOwner() != player).collect(Collectors.toList());
         for (Die die : myDice) {
             moves.addAll(die.listMoves(myDice, oppDice));
         }
+        if (gameManager.getLeagueLevel() == 2) moves = moves.stream().filter(m -> !m.nonAdversary).collect(Collectors.toList());
         return moves;
     }
 
@@ -69,6 +71,7 @@ public class Board {
                 Optional<Die> killed = die.roll(path, dice);
                 module.moveDie(die, path);
                 if (killed.isPresent()) {
+                    if (gameManager.getLeagueLevel() == 2 && killed.get().getTop() + die.getTop() != 7) throw new InvalidActionException("Captured and new die must have a sum of 7");
                     dice.remove(killed.get());
                     module.killDie(killed.get());
                 }

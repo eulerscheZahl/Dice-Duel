@@ -1,3 +1,4 @@
+<!-- LEAGUES level1 level2 -->
 <div id="statement_back" class="statement_back" style="display:none"></div>
 <div class="statement-body">
   <!-- GOAL -->
@@ -18,8 +19,14 @@
     </h1>
     <div>
       <div class="statement-rules-content">The game is played on an <const>8x8</const> grid. Each player has <const>8</const> dice to start with. Players move alternatingly. <br>
-      In each turn a player chooses on of their own dice and rolls it exactly as many cells as the number on top of the die initially showed. The path is a sequence if neighboring cells (diagonals are not considered as neighbors), it's allowed to make turns within the path. It is however not allowed to visit the same cell twice. <br>
+      In each turn a player chooses one of their own dice and rolls it exactly as many cells as the number on top of the die initially showed. The path is a sequence of neighboring cells (diagonals are not considered as neighbors), it's allowed to make turns within the path.
+      It is however not allowed to visit the same cell twice. <br>
       The path may not cross any cells which are occupied by other dice. The last step can end on an opponent's die which will then be captured and is out of play.
+        <!-- BEGIN level2 -->
+        <span style="color: #7cc576; background-color: rgba(124, 197, 118,.1); padding: 2px;">
+                Captures are only legal, if the sum of the captured die and the new die (after the move is applied) is equal to <const>7</const>.
+                </span>
+        <!-- END -->
       </div>
     </div>
   </div>
@@ -30,7 +37,8 @@
       <span>Expert Rules</span>
     </h1>
     <div class="statement-expert-rules-content">
-      You can find the source code of the game at <a href="https://github.com/eulerscheZahl/Dice-Duel">https://github.com/eulerscheZahl/Dice-Duel</a>.
+      You can find the source code of the game at <a href="https://github.com/eulerscheZahl/Dice-Duel">https://github.com/eulerscheZahl/Dice-Duel</a>. <br> <br>
+      You can zoom, rotate and pan the viewer by using the mouse wheel and holding the left or right mouse button.
     </div>
   </div>
   <!-- PROTOCOL -->
@@ -72,7 +80,7 @@
   Assets:<br>
   Dice <a href="https://www.turbosquid.com/3d-models/3ds-dice/412639">https://www.turbosquid.com/3d-models/3ds-dice/412639</a> <br>
   Board <a href="https://www.turbosquid.com/3d-models/3d-model-chess-games-rook-1540311">https://www.turbosquid.com/3d-models/3d-model-chess-games-rook-1540311</a><br>
-  Table <a href="https://www.turbosquid.com/3d-models/3d-small-dining-table-1161153">https://www.turbosquid.com/3d-models/3d-small-dining-table-1161153</a>
+  Table <a href="https://www.turbosquid.com/3d-models/3d-small-dining-table-1161153">https://www.turbosquid.com/3d-models/3d-small-dining-table-1161153</a><br>
   Background <a href="https://opengameart.org/content/elyvisions-skyboxes">https://opengameart.org/content/elyvisions-skyboxes</a>
     </div>
   </div>

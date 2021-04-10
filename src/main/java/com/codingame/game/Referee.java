@@ -42,7 +42,7 @@ public class Referee extends AbstractReferee {
 	@Override
 	public void gameTurn(int turn) {
 		Player player = gameManager.getPlayer((turn + 1) % 2);
-		if (board.listMoves(player).size() == 0) {
+		if (board.listMoves(player, gameManager).size() == 0) {
 			loseGame(player, "No valid moves");
 			return;
 		}
@@ -52,6 +52,8 @@ public class Referee extends AbstractReferee {
 		try {
 			String output = player.getOutputs().get(0);
 			board.playMove(player, output, gameManager);
+			gameManager.getPlayer(0).setScore((int)board.getDice().stream().filter(d -> d.getOwner().getIndex() == 0).count());
+			gameManager.getPlayer(1).setScore((int)board.getDice().stream().filter(d -> d.getOwner().getIndex() == 1).count());
 		} catch (TimeoutException e) {
 			loseGame(player, "timeout");
 		} catch (InvalidActionException e) {

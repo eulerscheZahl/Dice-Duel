@@ -47,6 +47,14 @@ public class Die {
         this.id = idCounter++;
     }
 
+    public Die(Die d) {
+        this.x = d.x;
+        this.y = d.y;
+        this.owner = d.owner;
+        this.id = d.id;
+        this.state = Arrays.copyOf(d.state, d.state.length);
+    }
+
     public int getX() {
         return x;
     }
@@ -148,7 +156,7 @@ public class Die {
         boolean[][] oppPlace = new boolean[Board.SIZE][Board.SIZE];
         for (Die die : opponent) oppPlace[die.x][die.y] = true;
         ArrayList<Move> result = new ArrayList<>();
-        moveRecurs(this.x, this.y, visited, oppPlace, "", result);
+        moveRecurs(this.x, this.y, visited, oppPlace, opponent, "", result);
         return result;
     }
 
@@ -156,9 +164,9 @@ public class Die {
     int[] dy = {1, 0, -1, 0};
     String[] dirs = {"D", "R", "U", "L"};
 
-    private void moveRecurs(int x, int y, boolean[][] visited, boolean[][] oppPlace, String s, ArrayList<Move> moves) {
+    private void moveRecurs(int x, int y, boolean[][] visited, boolean[][] oppPlace, List<Die> opponent, String s, ArrayList<Move> moves) {
         if (s.length() == getTop()) {
-            moves.add(new Move(s, this.x, this.y, x, y, oppPlace[x][y]));
+            moves.add(new Move(s, this, x, y, oppPlace[x][y], opponent));
             return;
         }
         if (oppPlace[x][y]) return;
@@ -167,7 +175,7 @@ public class Die {
             int y_ = y + dy[dir];
             if (x_ < 0 || x_ >= Board.SIZE || y_ < 0 || y_ >= Board.SIZE || visited[x_][y_]) continue;
             visited[x_][y_] = true;
-            moveRecurs(x_, y_, visited, oppPlace, s + dirs[dir], moves);
+            moveRecurs(x_, y_, visited, oppPlace, opponent, s + dirs[dir], moves);
             visited[x_][y_] = false;
         }
     }
