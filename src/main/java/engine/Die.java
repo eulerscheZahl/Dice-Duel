@@ -107,6 +107,7 @@ public class Die {
             if (c == 'D') y--;
             if (c == 'R') x++;
             if (c == 'L') x--;
+            if (x < 0 || x >= Board.SIZE || y < 0 || y >= Board.SIZE) throw new InvalidActionException("Tried to move die out of board");
             Optional<Die> collision = dice.stream().filter(d -> d != this && d.x == this.x && d.y == this.y).findFirst();
             if (collision.isPresent()) {
                 if (collision.get().owner == this.owner) throw new InvalidActionException("Tried to capture own die");

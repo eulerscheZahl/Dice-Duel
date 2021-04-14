@@ -26,6 +26,7 @@ public class Referee extends AbstractReferee {
 	private void loseGame(Player player, String message) {
 		player.setScore(-1);
 		player.deactivate(message);
+		gameManager.addToGameSummary(player.getNicknameToken() + ": " + message);
 		gameManager.endGame();
 	}
 
