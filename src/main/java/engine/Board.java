@@ -64,12 +64,14 @@ public class Board {
         int y = parts[0].charAt(1) - '1';
         String path = parts[1];
         gameManager.setFrameDuration(path.length() * 500);
+        boolean moved = false;
         for (Die die : dice) {
             if (die.getX() == x && die.getY() == y) {
                 if (die.getOwner() != player) throw new InvalidActionException("Tried to move opponent's dice");
                 if (path.length() != die.getTop()) throw new InvalidActionException("Incorrect path length");
                 Optional<Die> killed = die.roll(path, dice);
                 module.moveDie(die, path);
+                moved = true;
                 if (killed.isPresent()) {
                     if (gameManager.getLeagueLevel() == 2 && killed.get().getTop() + die.getTop() != 7) throw new InvalidActionException("Captured and new die must have a sum of 7");
                     dice.remove(killed.get());
@@ -78,5 +80,6 @@ public class Board {
                 break;
             }
         }
+        if (!moved) throw new InvalidActionException("No die in that cell");
     }
 }
