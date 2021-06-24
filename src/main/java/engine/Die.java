@@ -101,6 +101,8 @@ public class Die {
     }
 
     public Optional<Die> move(String s, ArrayList<Die> dice) throws InvalidActionException {
+        boolean[][] path = new boolean[Board.SIZE][Board.SIZE];
+        path[x][y] = true;
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             if (c == 'U') y++;
@@ -108,6 +110,8 @@ public class Die {
             if (c == 'R') x++;
             if (c == 'L') x--;
             if (x < 0 || x >= Board.SIZE || y < 0 || y >= Board.SIZE) throw new InvalidActionException("Tried to move die out of board");
+            if (path[x][y]) throw new InvalidActionException("Tried to intersect the own path");
+            path[x][y] = true;
             Optional<Die> collision = dice.stream().filter(d -> d != this && d.x == this.x && d.y == this.y).findFirst();
             if (collision.isPresent()) {
                 if (collision.get().owner == this.owner) throw new InvalidActionException("Tried to capture own die");
