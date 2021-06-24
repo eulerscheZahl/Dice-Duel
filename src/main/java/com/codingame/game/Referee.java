@@ -23,8 +23,8 @@ public class Referee extends AbstractReferee {
 		board = new Board(new Random(gameManager.getSeed()), gameManager.getPlayers(), boardModule);
 	}
 
-	private void loseGame(Player player, String message) {
-		player.setScore(-1);
+	private void loseGame(Player player, String message, boolean crashed) {
+		player.setScore(crashed ? -1 : 0);
 		player.deactivate(message);
 		gameManager.addToGameSummary(player.getNicknameToken() + ": " + message);
 		gameManager.endGame();
@@ -33,10 +33,8 @@ public class Referee extends AbstractReferee {
 	@Override
 	public void onEnd() {
 		for (Player player : gameManager.getPlayers()) {
-			if (player.getScore() == -1) continue;
-			for (Die die : board.getDice()) {
-				if (die.getOwner() == player) player.setScore(player.getScore() + 1);
-			}
+			if (!player.isActive()) continue;
+			player.setScore((int)board.getDice().stream().filter(d -> d.getOwner() == player).count());
 		}
 	}
 
@@ -44,7 +42,7 @@ public class Referee extends AbstractReferee {
 	public void gameTurn(int turn) {
 		Player player = gameManager.getPlayer((turn + 1) % 2);
 		if (board.listMoves(player, gameManager).size() == 0) {
-			loseGame(player, "No valid moves");
+			loseGame(player, "No valid moves", false);
 			return;
 		}
 
@@ -56,9 +54,9 @@ public class Referee extends AbstractReferee {
 			gameManager.getPlayer(0).setScore((int)board.getDice().stream().filter(d -> d.getOwner().getIndex() == 0).count());
 			gameManager.getPlayer(1).setScore((int)board.getDice().stream().filter(d -> d.getOwner().getIndex() == 1).count());
 		} catch (TimeoutException e) {
-			loseGame(player, "timeout");
+			loseGame(player, "timeout", true);
 		} catch (InvalidActionException e) {
-			loseGame(player, e.getMessage());
+			loseGame(player, e.getMessage(), true);
 		}
 	}
 }
